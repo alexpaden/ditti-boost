@@ -13,5 +13,8 @@ def display_follow_scripts():
     return choice
 
 def display_unfollow_scripts():
-    # Implement the display of unfollow scripts and prompt user selection
-    pass
+    print("1. Unfollow all users")
+    print("2. Unfollow non-follow back users")
+    print("3. Unfollow collection owners")
+    choice = input("Enter your choice: ")
+    return choice
