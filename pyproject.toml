@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "ditti-boost"
+version = "0.1.0"
+description = ""
+authors = ["alex paden <padenalex0@gmail.com>"]
+readme = "README.md"
+packages = [{include = "ditti_boost"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+farcaster = "^0.7.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+ditti-boost = "ditti_boost.main:main"
