@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ditti-boost"
-version = "0.0.8"
+version = "1.0.0"
 description = ""
 authors = ["alex paden <padenalex0@gmail.com>"]
 readme = "README.md"
@@ -16,6 +16,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 ditti-boost = "ditti_boost.cli:main"
-
-[tool.poetry.metadata]
-content-type = "text/markdown"

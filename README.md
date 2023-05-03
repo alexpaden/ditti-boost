@@ -15,6 +15,8 @@ Ditti Boost is a command-line tool that automates following and unfollowing user
 
 ## Installation
 
+_This project requires python3.10_
+
 To install Ditti Boost, run the following command:
 
 ```
