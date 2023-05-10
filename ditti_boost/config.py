@@ -9,7 +9,7 @@ ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 MNEMONIC_PHRASE = os.getenv('MNEMONIC_PHRASE')
 
 def save_credentials_to_env(access_token, mnemonic_phrase):
-    with open(env_path, 'a') as env_file:
+    with open(env_path, 'w') as env_file:
         if access_token:
             env_file.write(f"ACCESS_TOKEN={access_token}\n")
         if mnemonic_phrase:
