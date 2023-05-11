@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ditti-boost"
-version = "1.0.0"
+version = "1.0.1"
 description = ""
 authors = ["alex paden <padenalex0@gmail.com>"]
 readme = "README.md"
