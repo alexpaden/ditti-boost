@@ -57,7 +57,7 @@ class FollowScript:
 
 
 class UnfollowScript:
-    def __init__(self, criteria, warpcast_client):
+    def __init__(self, criteria, warpcast_client: Warpcast):
         self.criteria = criteria
         self.warpcast_client = warpcast_client
 
@@ -102,6 +102,22 @@ class UnfollowScript:
             except Exception as e:
                 logging.warning("Failed to unfollow user: {}".format(owner.username))
         logging.info("You've successfully unfollowed the owners of collection: {}. Total unfollows: {}".format(collection_id, successful_unfollows))
+        
+    def unfollow_no_casters(self):
+        users = self.warpcast_client.get_all_following().users
+        for user in users:
+            try:
+                casts = self.warpcast_client.get_casts(user.fid).casts
+            except Exception as e:
+                logging.warning("Failed to get casts for user: {}".format(user.username))
+            if(len(casts) == 0):
+                try:
+                    self.warpcast_client.unfollow_user(user.fid)
+                    logging.info("You've successfully unfollowed the user: {}".format(user.username))
+                except Exception as e:
+                    logging.warning("Failed to unfollow user: {}".format(user.username))
+            else:
+                pass
 
     def execute(self):
         if self.criteria == '1':
@@ -111,3 +127,5 @@ class UnfollowScript:
         elif self.criteria == '3':
             collection_id = input("Enter the collection ID: ")
             self.unfollow_collection_owners(collection_id)
+        elif self.criteria == '4':
+            self.unfollow_no_casters()

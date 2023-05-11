@@ -16,5 +16,6 @@ def display_unfollow_scripts():
     print("1. Unfollow all users")
     print("2. Unfollow non-follow back users")
     print("3. Unfollow collection owners")
+    print("4. Unfollow users with no casts")
     choice = input("Enter your choice: ")
     return choice
