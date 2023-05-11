@@ -12,6 +12,8 @@ Ditti Boost is a command-line tool that automates following and unfollowing user
   - Unfollow all users
   - Unfollow non-follow back users
   - Unfollow collection owners
+  - Unfollow users with no casts
+  - Unfollow no casts within x days
 
 ## Installation
 

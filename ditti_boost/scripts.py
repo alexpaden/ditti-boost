@@ -1,5 +1,6 @@
 # scripts.py
 import logging
+import time
 from farcaster import Warpcast
 
 class FollowScript:
@@ -107,22 +108,56 @@ class UnfollowScript:
         counter = 0
         most_recent_fid = self.warpcast_client.get_recent_users(limit=1).users[0].fid
         users = self.warpcast_client.get_all_following().users
+
         for user in users:
-            if user.fid >= most_recent_fid-500:
-                continue
-            try:
-                casts = self.warpcast_client.get_casts(user.fid).casts
-            except Exception as e:
-                logging.warning("Failed to get casts for user: {}".format(user.username))
-                continue
-            if(len(casts) == 0):
+            if user.fid < most_recent_fid-500:
                 try:
-                    self.warpcast_client.unfollow_user(user.fid)
-                    logging.info("You've successfully unfollowed the user: {}".format(user.username))
-                    counter += 1
+                    casts = self.warpcast_client.get_casts(user.fid).casts
+                    if len(casts) == 0:
+                        try:
+                            self.warpcast_client.unfollow_user(user.fid)
+                            logging.info("You've successfully unfollowed the user: {}".format(user.username))
+                            counter += 1
+                        except Exception as e:
+                            logging.warning("Failed to unfollow user: {}".format(user.username))
                 except Exception as e:
-                    logging.warning("Failed to unfollow user: {}".format(user.username))
+                    logging.warning("Failed to get casts for user: {}".format(user.username))
+
         logging.info("You've successfully unfollowed {} users who have never casted.".format(counter))
+        
+    def unfollow_no_recent_cast(self, days=60):
+        # Convert days to milliseconds
+        days_in_milliseconds = days * 24 * 60 * 60 * 1000
+
+        # Get the current timestamp in milliseconds
+        current_timestamp = int(time.time() * 1000)
+
+        # Calculate the cutoff timestamp
+        cutoff_timestamp = current_timestamp - days_in_milliseconds
+
+        most_recent_fid = self.warpcast_client.get_recent_users(limit=1).users[0].fid
+        users = self.warpcast_client.get_all_following().users
+        successful_unfollows = 0
+
+        for user in users:
+            if user.fid < most_recent_fid-500:
+                try:
+                    # Get the user's casts
+                    casts = self.warpcast_client.get_casts(user.fid).casts
+
+                    # If the user has no casts or the most recent cast is older than the cutoff, unfollow the user
+                    if not casts or max(cast.timestamp for cast in casts) < cutoff_timestamp:
+                        try:
+                            self.warpcast_client.unfollow_user(user.fid)
+                            successful_unfollows += 1
+                            logging.info("You've successfully unfollowed the user: {}".format(user.username))
+                        except Exception as e:
+                            logging.warning("Failed to unfollow user: {}".format(user.username))
+                except Exception as e:
+                    logging.warning("Failed to get casts for user: {}".format(user.username))
+
+        logging.info("You've successfully unfollowed {} users who have not cast within the last {} days.".format(successful_unfollows, days))
+
 
     def execute(self):
         if self.criteria == '1':
@@ -134,3 +169,11 @@ class UnfollowScript:
             self.unfollow_collection_owners(collection_id)
         elif self.criteria == '4':
             self.unfollow_no_casters()
+        elif self.criteria == '5':
+            try:
+                days = input("Enter the maximum number of days the user must have cast within (default is 60): ")
+                days = int(days) if days else 60
+            except ValueError:
+                days = 60
+            self.unfollow_no_recent_cast(days)
+
