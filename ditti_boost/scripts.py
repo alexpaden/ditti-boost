@@ -104,20 +104,22 @@ class UnfollowScript:
         logging.info("You've successfully unfollowed the owners of collection: {}. Total unfollows: {}".format(collection_id, successful_unfollows))
         
     def unfollow_no_casters(self):
+        most_recent_fid = self.warpcast_client.get_recent_users(limit=1).users[0].fid
         users = self.warpcast_client.get_all_following().users
         for user in users:
+            if user.fid >= most_recent_fid-500:
+                continue
             try:
                 casts = self.warpcast_client.get_casts(user.fid).casts
             except Exception as e:
                 logging.warning("Failed to get casts for user: {}".format(user.username))
+                continue
             if(len(casts) == 0):
                 try:
                     self.warpcast_client.unfollow_user(user.fid)
                     logging.info("You've successfully unfollowed the user: {}".format(user.username))
                 except Exception as e:
                     logging.warning("Failed to unfollow user: {}".format(user.username))
-            else:
-                pass
 
     def execute(self):
         if self.criteria == '1':
